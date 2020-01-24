@@ -80,11 +80,17 @@ private Scene setupHelp() throws FileNotFoundException {
 ```
 
 ### Method 2
-Main.step() is one of my worse methods.
+Main.step() is one of my worse methods. It comprises the game loop and also adds key input handlers to the scenes as necessary.
+It also contains the only known bug in the code. I created the inGame variable to make the code more readable and track the game status.
+Otherwise, most parts of this method are short and relatively easy to read.
 
-TODO: FINISH THIS _____________________________________________
-_____________________________________________________________F
-_____________________________________________________________f
+In the commit [finished help page description](https://coursework.cs.duke.edu/compsci308_2020spring/game_taj26/commit/78b4390079f4a8abb8596e4a89e76768f2f90bab),
+I added the step function because this was the first time a step was needed to change scenes to the help page.
+In the commit [added ball that bounces](https://coursework.cs.duke.edu/compsci308_2020spring/game_taj26/commit/dfe792e22846fc36351f4eeeb0f4874773d59b49),
+I modified the step function to accommodate the scene change to that of GameManager, because this was the first time I needed to change the scene and animate it.
+Further edits included attempts to debug the scene change problem, but ultimately the changes were reverted in favor of the mostly working code from the previous commit.
+
+The commit messages pertaining to this method could have been clearer, indicating that they changed more than just the implementation, but also the pipeline from Main.step().
 
 ```java
 private void step (double elapsedTime, Stage stage) throws FileNotFoundException {
@@ -153,12 +159,6 @@ private void collision() throws FileNotFoundException {
 }
 ```
 
-Combined emphasis with **asterisks and _underscores_**.
-
-
-You can put links to commits like this: [My favorite commit](https://coursework.cs.duke.edu/compsci308_2019spring/example_bins/commit/ae099c4aa864e61bccb408b285e8efb607695aa2)
-
-
 ## Design
 
 ### Adding Levels
@@ -166,27 +166,80 @@ To add additional levels, simply add more levelN.txt files to Resources and make
 The MenuPage setupLevel() would also be need to be altered to add a button for the new level, as well as adding a cheat key to switch to it in Main.handleKeyInput().
 
 ### Non-SHY Code
+My code is relatively SHY. Most of the classes have unidirectional dependency (e.g. GameManager depends on Ball but not vice versa). Some exceptions include with MenuPage and GameManager, which depend on each other.
+This is because of how I implemented the scene changes, with MenuPage getting GameManager's scenes in order to implement the scene switch. This could be improved with more time on the project.
 
 ### Feature 1
+Ball collisions and rebounds were something that I implemented during the middle stage of development. It combines several different Classes in order to change direction upon contact with another collidable object.
+
+I created Entity as an abstract class before creating Ball. It included methods to set the x and y velocities, step, and determine the speed and direction. 
+Ball inherited from it, with the ability to step and set x and y velocities as well.
+
+My goal was to have the Ball bounce as if off a flat surface for walls and bricks, but change the direction it bounced if rebounding off the paddle.
+In order to further implement this, I created wallCollision() and brickCollision() in GameManager that loop through and check for collisions, then triggering a flat collision.
+Likewise, paddleCollision() checks for contact with the paddle, in which the x and y velocities are modified based on the angle with which they strike the paddle relative to its center. 
+This mostly just includes a calculation with some additional scaling.
+
+This feature's design assumes that contact will come from outside the collidable object (i.e. above in the case of the paddle).
+In designing, I assumed that the information from both the Balls and the collidable objects were needed, so I implemented all of the collisions
+in GameManager, rather than in Ball itself. This unfortunately added to the number of methods in GameManager.
+
+As more collidable objects were added (e.g. Paddle and Enemy), these also had to be accounted for in GameManager with more methods.
 
 ### Feature 2
+The Power Ups were an important scalable feature implemented after the Ball and Bricks.
+
+Powerup extended the abstract class Entity, the superclass of Ball. This allowed its motion to be handled simply, with a 0 xVelocity and constant downward yVelocity.
+In addition to the Powerup class, Powerup objects needed to be instantiated upon the breaking of bricks, handled in GameManager.destroyBrick(). Their collisions with the Paddle needed to be detected,
+and the Power Up effects needed to be introduced. This was handled based on time stamps and IDs, so that the effects would disappear after a fixed length of time.
+
+This design remained relatively constant, and I only used two time stamp variables to minimize the number of related instance variables in GameManager.
+Because of the variety of different Power Up effects, I chose to have this implement in GameManager rather than a separate PowerupEffect class.
 
 ### Conclusion
-PULL FROM DESIGN.md
+Overall, the program uses Main to create the stage and calls MenuPage for menu scene information. This may change depending on buttons clicked in the menu screens.
+Once the game has been started (via clicking Start or selecting a level), GameManager builds the level and populates the scene, returning its scene to Main to display.
+Main animates/steps for the paddle, balls, etc. in the game, also adding key code handlers when appropriate. Upon the completion of a level, GameManager builds the next level and continues the process.
+
+Upon winning or losing the game, the player is returned to the MenuPage main menu scene, where they can opt to play again. 
+
+All of the scenes use the other classes (e.g. Ball, MenuBox, Paddle) to populate their contexts.
 
 ## Alternate Designs
 
 ### Possible Alternate Implementations
+I wrestled with having Enemy and Brick inherit from the same abstract superclass. I thought this might be more effective, since they have similar behaviors, like
+taking damage, increasing the score, or colliding with the Ball, but I eventually decided against it, because of their different shapes.
+Brick was based loosely on Rectangle, while Enemy came from Circle. It's possible that I should have created an interface for Collidable, and had both classes implement that interface.
 
 ### Telling the Other Guy
+As described above in Feature 1, the Ball could have held more responsibility in checking its own collisions, rather than having all the processing happen in Gamemanager.
+
+One other case would be with ToolBar, which took GameManager in its constructor in order to point back to implement the Quit button. This "Told the Other Guy," but was not very SHY, and ultimately could have been better implemented.
 
 ### Design Decision 1
+I decided to make MenuBox the same general button for almost all clickable buttons in the project.
+I also gave it a has-a relationship with MenuText. This led to it having many different constructors, but it was effective in allowing me
+to implement standards across the program, such as button colors and fonts, and it greatly streamlined the implementation of my MenuPage class.
+
+I considered making separate boxes for each screen, but this seemed to be more effective, since I could just change a singular setting in a specific case if it came up (a simple 1-line change).
 
 ### Design Decision 2
+I decided to have GameManager have a List instance variable called balls. This turned out to be a very effective decision because it allowed me to
+add more balls easily with the Multiball Power Up, and I was able to loop through all the balls every time I checked for a collision.
+It also allowed me to declare that the player had lost a life anytime balls was empty (see GameManager.step()).
+
+Alternatively, I could have just created one ball and added more instance variables for each ball, but this would have been rather clumsy and my foresight served me well for my implementation.
 
 ### Conclusions
+Aside from some minor pipelining issues between Main, MenuPage, and GameManager, I am rather satisfied with the design of my code, dividing up game elements between many different classes, each largely with their own behavior.
+I believe that my code generally exhibits Object-Oriented principles and serves as a good start for the course.
 
-Here is another way to look at my design:
+## Overall Conclusion
+The best thing I learned during this project is to refactor as I go. In the past, I would wait until I had finished an implementation before refactoring/cleaning code, but it is much more time-effective to do it as one goes, I found from this project.
 
-![This is cool, too bad you can't see it](crc-example.png "An alternate design")
+The worst thing I experienced in this project was difficulty with Scenes and animation. I had limited experience and understanding of the Application setup of
+OpenJFX, and this led to more difficulties and bugs.
 
+In the future, I will continue to plan out my designs using many classes to follow Object-Oriented Principles. However, I will need to become more familiar with the libraries I am using,
+along with their best practices to ensure I don't run into bugs like I did here.
