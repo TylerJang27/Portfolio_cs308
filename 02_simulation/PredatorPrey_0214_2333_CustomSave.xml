@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<data type="simulation">
+    <title>PredatorPrey</title>
+    <shark>0</shark>
+    <grid_type>0</grid_type>
+    <shape>0</shape>
+    <rate>5</rate>
+    <shark_starve>4</shark_starve>
+    <fish_breed>2</fish_breed>
+    <width>20</width>
+    <shark_breed>7</shark_breed>
+    <height>20</height>
+    <empty>70</empty>
+    <grid>
+        <row>2 1 1 0 1 0 0 1 0 0 0 0 1 0 1 1 1 0 1 0</row>
+        <row>0 2 0 0 1 0 1 1 0 0 0 0 0 1 0 0 0 0 0 0</row>
+        <row>0 0 2 1 1 0 0 0 0 1 0 1 0 1 0 1 1 0 0 0</row>
+        <row>1 0 0 2 1 0 0 0 0 1 0 0 1 0 0 0 1 1 0 0</row>
+        <row>0 0 0 0 2 1 0 0 0 0 0 0 0 1 0 0 0 1 1 0</row>
+        <row>0 1 0 0 0 2 0 0 0 1 0 1 0 0 0 0 0 0 0 0</row>
+        <row>0 0 1 0 0 0 2 0 0 1 0 0 0 0 0 0 1 0 1 1</row>
+        <row>1 0 0 0 0 1 1 2 0 1 1 0 0 0 0 0 0 0 0 1</row>
+        <row>0 0 0 0 0 0 0 1 2 0 0 0 1 0 0 0 1 0 0 0</row>
+        <row>0 1 0 0 0 0 1 0 1 2 0 0 0 0 1 0 0 0 0 1</row>
+        <row>0 0 0 1 0 0 0 1 1 0 2 2 2 2 2 2 2 2 2 2</row>
+        <row>1 0 0 0 0 0 0 1 0 1 0 0 1 1 1 1 1 1 1 0</row>
+        <row>0 1 1 0 0 0 0 0 0 1 0 0 0 1 0 1 0 0 1 0</row>
+        <row>0 1 0 1 0 1 0 0 1 0 0 0 1 0 0 0 0 0 1 0</row>
+        <row>0 0 1 0 0 0 0 0 1 1 0 0 1 0 0 0 0 1 0 1</row>
+        <row>0 1 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0 0</row>
+        <row>1 0 0 0 0 0 1 1 0 0 0 0 0 0 1 1 0 0 1 0</row>
+        <row>0 0 0 0 1 0 0 1 0 1 0 1 0 0 0 1 0 1 0 0</row>
+        <row>0 1 1 0 0 1 0 0 0 1 0 0 0 0 0 0 0 1 0 0</row>
+        <row>0 1 0 0 1 1 0 0 0 1 1 0 1 1 0 0 1 0 0 0</row>
+    </grid>
+</data>
